@@ -6,41 +6,450 @@
     <meta charset="UTF-8">
     <title>Admin Panel - Quiz App</title>
     <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css?family=Quicksand:700,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --admin-bg: rgba(12, 24, 38, 0.92);
+            --admin-panel: rgba(20, 36, 56, 0.9);
+            --admin-line: rgba(90, 140, 170, 0.35);
+            --admin-accent: #00f2fe;
+            --admin-accent-2: #4f8cff;
+            --admin-warm: #ffe066;
+        }
+
+        html,
+        body {
+            height: 100vh;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        body {
+            background: linear-gradient(120deg, #1e003a 0%, #0f2027 60%, #2c5364 100%);
+            font-family: 'Quicksand', Arial, sans-serif;
+            color: #fff;
+        }
+
+        .admin-center {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 20px 48px 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 10px;
+        }
+
+        .admin-card {
+            background: var(--admin-bg);
+            border-radius: 20px;
+            box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55);
+            padding: 20px;
+            border: 1px solid var(--admin-line);
+            width: 100%;
+            min-height: 560px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .admin-title {
+            text-align: center;
+            color: #ffffff;
+            font-size: 2.2rem;
+            font-weight: 900;
+            margin: 0;
+            letter-spacing: 1.2px;
+            text-shadow: 0 0 10px #00f2fe, 0 0 24px #4f8cff;
+        }
+
+        .admin-subtitle {
+            color: var(--admin-warm);
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: 0.6px;
+            text-shadow: 0 0 4px rgba(0, 242, 254, 0.35);
+        }
+
+        .admin-header {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 16px;
+            padding: 6px 6px 2px 6px;
+            border-bottom: 1px solid var(--admin-line);
+        }
+
+        .admin-meta {
+            color: #c8d6f0;
+            font-size: 0.95rem;
+            margin-top: 6px;
+            letter-spacing: 0.3px;
+            text-align: center;
+        }
+
+        .admin-section {
+            background: var(--admin-panel);
+            border: 1px solid rgba(0, 242, 254, 0.18);
+            border-radius: 14px;
+            padding: 14px;
+        }
+
+        .admin-nav-btn.active::before {
+            content: "";
+            position: absolute;
+            left: -14px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 6px;
+            height: 26px;
+            border-radius: 6px;
+            background: linear-gradient(180deg, var(--admin-accent), var(--admin-accent-2));
+        }
+
+        .admin-back-btn:hover,
+        .admin-back-btn:focus {
+            background: var(--admin-accent);
+            color: #1e003a;
+        }
+
+        .admin-main {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            gap: 18px;
+            min-height: 420px;
+        }
+
+        .admin-left {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            border-right: 1px solid var(--admin-line);
+            padding-right: 14px;
+        }
+
+        .admin-right {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            padding-left: 6px;
+            min-height: 260px;
+        }
+
+        .admin-nav-btn {
+            background: rgba(12, 24, 38, 0.9);
+            border: 1px solid rgba(0, 242, 254, 0.24);
+            border-radius: 12px;
+            padding: 12px 14px;
+            color: #eaf4ff;
+            font-size: 0.98rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-align: left;
+            transition: background 0.18s, border 0.18s, transform 0.13s, box-shadow 0.13s;
+            position: relative;
+        }
+
+        .admin-nav-btn.active {
+            background: linear-gradient(90deg, var(--admin-accent) 0%, var(--admin-accent-2) 100%);
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(0, 242, 254, 0.35);
+        }
+
+        .admin-nav-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 12px rgba(0, 242, 254, 0.25);
+        }
+
+        .admin-primary-btn,
+        .admin-danger-btn {
+            display: inline-block;
+            background: linear-gradient(90deg, var(--admin-accent) 0%, var(--admin-accent-2) 100%);
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 0;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.13s, box-shadow 0.13s;
+            margin-bottom: 10px;
+            width: 100%;
+            max-width: 260px;
+            letter-spacing: 0.5px;
+        }
+
+        .admin-primary-btn:hover,
+        .admin-primary-btn:focus {
+            background: linear-gradient(90deg, var(--admin-accent-2) 0%, var(--admin-accent) 100%);
+            transform: translateY(-2px) scale(1.04);
+            box-shadow: 0 8px 26px rgba(0, 242, 254, 0.36);
+        }
+
+        .admin-danger-btn {
+            background: linear-gradient(90deg, #ff00c8 0%, #ff4d4f 100%);
+            margin-top: 10px;
+        }
+
+        .admin-danger-btn:hover,
+        .admin-danger-btn:focus {
+            background: linear-gradient(90deg, #ff4d4f 0%, #ff00c8 100%);
+            transform: translateY(-2px) scale(1.04);
+            box-shadow: 0 8px 26px rgba(255, 77, 79, 0.42);
+        }
+
+        .admin-back-btn {
+            background: none;
+            border: 2px solid var(--admin-accent);
+            color: var(--admin-accent);
+            border-radius: 10px;
+            padding: 10px 18px;
+            font-size: 0.98rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.18s, color 0.18s;
+            width: auto;
+            min-width: 180px;
+        }
+
+        #participants-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 10px 0;
+        }
+
+        #participants-list li {
+            padding: 8px 10px;
+            border-radius: 8px;
+            background: rgba(35, 43, 58, 0.9);
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #eaf4ff;
+            font-size: 0.98rem;
+        }
+
+        #participants-list button {
+            background: none;
+            border: 1px solid #ff4d4f;
+            color: #ff4d4f;
+            border-radius: 6px;
+            padding: 4px 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.18s, color 0.18s;
+        }
+
+        #participants-list button:hover {
+            background: #ff4d4f;
+            color: #fff;
+        }
+
+        .promote-form {
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .promote-input {
+            width: 100%;
+            max-width: 360px;
+            padding: 8px 10px;
+            border-radius: 7px;
+            border: 1px solid #4f8cff;
+            background: rgba(20, 36, 56, 0.95);
+            color: #fff;
+            font-size: 0.98rem;
+        }
+
+        .promote-message {
+            font-size: 0.92rem;
+            min-height: 1.2em;
+            color: #baffc9;
+        }
+
+        .user-list {
+            margin-top: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .user-list-item {
+            padding: 6px 8px;
+            border-radius: 6px;
+            background: rgba(35, 43, 58, 0.9);
+            margin-bottom: 4px;
+            font-size: 0.92rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #eaf4ff;
+            cursor: pointer;
+        }
+
+        .user-list-item span {
+            margin-right: 8px;
+        }
+
+        /* Extra spacing between quiz ID buttons */
+        #admin-quiz-list .admin-primary-btn {
+            margin-bottom: 16px;
+        }
+
+        /* Stack quiz ID buttons with gap for clarity */
+        #admin-quiz-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        @media (max-width: 720px) {
+            .admin-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .admin-main {
+                grid-template-columns: 1fr;
+            }
+
+            .admin-left {
+                border-right: none;
+                border-bottom: 1px solid var(--admin-line);
+                padding-right: 0;
+                padding-bottom: 12px;
+            }
+        }
+    </style>
 </head>
 
-<body
-    style="background: linear-gradient(120deg, #e3f0ff 0%, #f7faff 100%); min-height:100vh; overflow-x:hidden; font-family:'Quicksand', Arial, sans-serif;">
-    <div
-        style="max-width: 520px; margin: 48px auto; padding: 32px 24px 24px 24px; border-radius: 16px; background: linear-gradient(120deg, #f7faff 60%, #e3f0ff 100%); box-shadow: 0 2px 16px #b3d1ff55;">
-        <h2
-            style="text-align:center; color:#4f8cff; font-size:2.1rem; font-weight:900; margin-bottom:18px; letter-spacing:1.2px; text-shadow:0 0 10px #b3d1ff, 0 0 18px #4f8cff;">
-            Admin Panel</h2>
-        <div id="admin-quizzes-section" style="margin-bottom:24px;">
-            <h3
-                style="color:#ffe066; font-size:1.08rem; font-weight:700; margin-bottom:12px; letter-spacing:0.5px; text-shadow:0 0 4px #00f2fe66;">
-                Your Published Quizzes</h3>
-            <div id="admin-quiz-list"></div>
-            <button id="add-question-btn"
-                style="display:none; background:linear-gradient(90deg,#00f2fe 0%,#4f8cff 100%); color:#fff; font-size:1rem; font-weight:700; border:none; border-radius:10px; padding:12px 0; cursor:pointer; transition:background 0.2s; margin-bottom:8px; width:100%; max-width:260px; align-self:flex-start; letter-spacing:0.5px;">Add
-                Question</button>
-            <button id="delete-entire-quiz-btn"
-                style="display:none; background:linear-gradient(90deg,#ff00c8 0%,#00f2fe 100%); color:#fff; font-size:1rem; font-weight:700; border:none; border-radius:10px; padding:12px 0; cursor:pointer; transition:background 0.2s; margin-bottom:8px; width:100%; max-width:260px; align-self:flex-start; letter-spacing:0.5px;">Delete
-                Entire Quiz</button>
+<body>
+    <script>
+        // Guard: only admins can access admin page
+        (function () {
+            const token = localStorage.getItem('token');
+            const role = localStorage.getItem('role') || 'USER';
+            if (!token || role !== 'ADMIN') {
+                window.location.href = 'dashboard.html';
+            }
+        })();
+    </script>
+    <canvas id="starfield"
+        style="position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:-2;pointer-events:none;"></canvas>
+    <div class="admin-center">
+        <h2 class="admin-title">Admin Panel</h2>
+        <div class="admin-meta">Manage quizzes, promote users, and review report cards.</div>
+        <div class="admin-card">
+            <div class="admin-header">
+                <button onclick="window.location.href='dashboard.html'" class="admin-back-btn">Back to Dashboard</button>
+            </div>
+            <div class="admin-main">
+                <div class="admin-left">
+                    <button id="nav-quizzes" class="admin-nav-btn">Previously Made Quizzes</button>
+                    <button id="nav-promote" class="admin-nav-btn">Promote to Admin</button>
+                    <button id="nav-report" class="admin-nav-btn">Report Card</button>
+                </div>
+                <div class="admin-right">
+                    <div id="section-quizzes" class="admin-section" style="display:none;">
+                        <h3 class="admin-subtitle">Previously Made Quizzes</h3>
+                        <div id="admin-quiz-list"></div>
+                    </div>
+                    <div id="section-promote" class="admin-section" style="display:none;">
+                        <h3 class="admin-subtitle">Promote to Admin</h3>
+                        <div class="promote-form">
+                            <input type="text" id="promote-username" class="promote-input"
+                                placeholder="Enter username to promote">
+                            <button id="promote-btn" class="admin-primary-btn">Make Admin</button>
+                            <div id="promote-message" class="promote-message"></div>
+                            <div id="user-list" class="user-list"></div>
+                        </div>
+                    </div>
+                    <div id="section-report" class="admin-section" style="display:none;">
+                        <h3 class="admin-subtitle">Report Card</h3>
+                        <div class="promote-form">
+                            <input type="text" id="report-username" class="promote-input"
+                                placeholder="Enter username for report">
+                            <button id="report-btn" class="admin-primary-btn">Show Report</button>
+                            <div id="report-details" class="promote-message" style="margin-top:4px;"></div>
+                            <div id="report-user-list" class="user-list"></div>
+                        </div>
+                    </div>
+                    <div id="section-participants" class="admin-section">
+                        <h3 class="admin-subtitle">
+                            Participants for Quiz: <span id="participants-quiz-id">Select a quiz</span>
+                        </h3>
+                        <ul id="participants-list"></ul>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div id="participants-section" style="display:none; margin-bottom:24px;">
-            <h3
-                style="color:#ffe066; font-size:1.08rem; font-weight:700; margin-bottom:12px; letter-spacing:0.5px; text-shadow:0 0 4px #00f2fe66;">
-                Participants for Quiz: <span id="participants-quiz-id"></span></h3>
-            <ul id="participants-list" style="list-style:none; padding:0; margin:0 0 10px 0;"></ul>
-            <button onclick="hideParticipants()"
-                style="background:linear-gradient(90deg,#00f2fe 0%,#4f8cff 100%); color:#fff; font-size:1rem; font-weight:700; border:none; border-radius:10px; padding:12px 0; cursor:pointer; transition:background 0.2s; margin-bottom:8px; width:100%; max-width:260px; align-self:flex-start; letter-spacing:0.5px;">Back</button>
-        </div>
-        <button onclick="window.location.href='dashboard.html'"
-            style="background:linear-gradient(90deg,#00f2fe 0%,#4f8cff 100%); color:#fff; font-size:1rem; font-weight:700; border:none; border-radius:10px; padding:12px 0; cursor:pointer; transition:background 0.2s; margin-bottom:8px; width:100%; max-width:260px; align-self:flex-start; letter-spacing:0.5px;">Back
-            to Dashboard</button>
     </div>
     <script src="js/host-utils.js"></script>
     <script src="js/admin.js"></script>
+    <script>
+        // Starfield animation for admin page (shared look with dashboard/host)
+        const starCanvas = document.getElementById('starfield');
+        if (starCanvas) {
+            const ctx = starCanvas.getContext('2d');
+            let w = window.innerWidth;
+            let h = window.innerHeight;
+            starCanvas.width = w;
+            starCanvas.height = h;
+            let stars = [];
+            for (let i = 0; i < 90; i++) {
+                stars.push({
+                    x: Math.random() * w,
+                    y: Math.random() * h,
+                    r: Math.random() * 1.2 + 0.3,
+                    d: Math.random() * 0.5 + 0.2
+                });
+            }
+
+            function drawStars() {
+                ctx.clearRect(0, 0, w, h);
+                ctx.save();
+                ctx.globalAlpha = 0.85;
+                for (let s of stars) {
+                    ctx.beginPath();
+                    ctx.arc(s.x, s.y, s.r, 0, 2 * Math.PI);
+                    ctx.fillStyle = '#fff';
+                    ctx.shadowColor = '#00f2fe';
+                    ctx.shadowBlur = 8;
+                    ctx.fill();
+                }
+                ctx.restore();
+            }
+
+            function animateStars() {
+                for (let s of stars) {
+                    s.y += s.d;
+                    if (s.y > h) {
+                        s.y = 0;
+                        s.x = Math.random() * w;
+                    }
+                }
+                drawStars();
+                requestAnimationFrame(animateStars);
+            }
+            window.addEventListener('resize', () => {
+                w = window.innerWidth;
+                h = window.innerHeight;
+                starCanvas.width = w;
+                starCanvas.height = h;
+            });
+            animateStars();
+        }
+    </script>
 </body>
 
 </html>

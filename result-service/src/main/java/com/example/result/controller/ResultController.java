@@ -120,4 +120,23 @@ public class ResultController {
         List<Result> results = service.getResultsByQuizId(quizId);
         return ResponseEntity.ok(results);
     }
+
+    // Get aggregated report for a user across all quizzes
+    @GetMapping("/report/{studentUsername}")
+    public ResponseEntity<Map<String, Object>> getUserReport(@PathVariable String studentUsername) {
+        List<Result> results = service.getResultsByStudentUsername(studentUsername);
+        int totalScore = results.stream().mapToInt(Result::getScore).sum();
+        int totalQuizzes = results.size();
+        int totalCorrect = results.stream().mapToInt(Result::getCorrectAnswers).sum();
+        int totalQuestions = results.stream().mapToInt(Result::getTotalQuestions).sum();
+
+        Map<String, Object> report = new java.util.HashMap<>();
+        report.put("studentUsername", studentUsername);
+        report.put("totalScore", totalScore);
+        report.put("totalQuizzes", totalQuizzes);
+        report.put("totalCorrectAnswers", totalCorrect);
+        report.put("totalQuestions", totalQuestions);
+        report.put("results", results);
+        return ResponseEntity.ok(report);
+    }
 }

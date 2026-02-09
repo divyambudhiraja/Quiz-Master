@@ -15,7 +15,9 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
         if (!res.ok) throw new Error("Invalid credentials");
         const data = await res.json();
         localStorage.setItem("token", data.token);
-        localStorage.setItem("username", username);
+        // Prefer values from backend when available
+        localStorage.setItem("username", data.username || username);
+        localStorage.setItem("role", data.role || "USER");
         window.location.href = "dashboard.html";
     } catch (err) {
         document.getElementById("error").textContent = err.message;

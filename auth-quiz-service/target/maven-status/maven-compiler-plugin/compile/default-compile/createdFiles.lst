@@ -1,0 +1,8 @@
+com/example/authquiz/controller/AuthController$WebConfig.class
+com/example/authquiz/repository/StudentRepository.class
+com/example/authquiz/security/JwtUtil.class
+com/example/authquiz/controller/AuthController.class
+com/example/authquiz/model/Student.class
+com/example/authquiz/service/StudentService.class
+com/example/authquiz/security/SecurityConfig.class
+com/example/authquiz/AuthQuizApplication.class

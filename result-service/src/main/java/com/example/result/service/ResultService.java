@@ -39,6 +39,10 @@ public class ResultService {
         return repository.findByQuizId(quizId);
     }
 
+    public java.util.List<Result> getResultsByStudentUsername(String username) {
+        return repository.findByStudentUsername(username);
+    }
+
     public void deleteResultForUser(String quizId, String studentUsername) {
         repository.deleteByQuizIdAndStudentUsername(quizId, studentUsername);
     }

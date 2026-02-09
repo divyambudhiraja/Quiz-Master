@@ -14,6 +14,9 @@ public class Student {
     private String username;
     private String password;
 
+    // "USER" (student) or "ADMIN"
+    private String role = "USER";
+
     // Getters and Setters
     public Long getId() {
         return id;
@@ -37,5 +40,13 @@ public class Student {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

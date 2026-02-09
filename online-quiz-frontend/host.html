@@ -14,7 +14,8 @@
             min-height: 100vh;
             margin: 0;
             padding: 0;
-            overflow: hidden;
+            overflow-x: hidden;
+            overflow-y: auto;
         }
 
         body {
@@ -31,48 +32,79 @@
         }
 
         .host-center {
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
+            position: relative;
             z-index: 2;
             display: flex;
             flex-direction: column;
             align-items: center;
             width: 100%;
-            max-width: 540px;
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 32px 20px 48px 20px;
+            gap: 18px;
+            min-height: 100vh;
+            justify-content: center;
         }
 
         .host-title {
-            font-size: 2.7rem;
+            font-size: 2.6rem;
             font-weight: 900;
-            letter-spacing: 2px;
+            letter-spacing: 1.6px;
             color: #fff;
             text-shadow: 0 0 18px #00f2fe, 0 0 32px #4f8cff;
-            margin-bottom: 32px;
+            margin-bottom: 0;
             text-align: center;
         }
 
+        .host-card {
+            background: transparent;
+            border-radius: 0;
+            box-shadow: none;
+            padding: 0;
+            border: none;
+            width: 100%;
+            max-width: 720px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 18px;
+        }
+
+        #quiz-id-section {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+            max-width: 520px;
+            align-items: center;
+        }
+
         .host-label {
-            font-size: 1.18rem;
+            font-size: 1.05rem;
             font-weight: 700;
             color: #ffe066;
-            margin-bottom: 12px;
-            letter-spacing: 1px;
-            align-self: flex-start;
+            margin: 0;
+            letter-spacing: 0.5px;
+            align-self: center;
+            text-align: center;
+            width: 100%;
         }
 
         .host-input,
         .host-center input[type="text"] {
             width: 100%;
-            padding: 12px 16px;
+            max-width: 100%;
+            padding: 10px 14px;
             border-radius: 8px;
             border: none;
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             background: #232b3a;
             color: #fff;
             box-shadow: 0 1.5px 0 #00f2fe44;
-            margin-bottom: 18px;
+            margin: 0;
+            margin-left: 0;
+            margin-right: 0;
+            display: block;
         }
 
         .host-btn,
@@ -90,12 +122,9 @@
             transition: background 0.2s, transform 0.13s, box-shadow 0.13s;
             letter-spacing: 1px;
             width: 100%;
-            margin-bottom: 18px;
-            max-width: 540px;
-        }
-
-        .host-btn:last-child {
-            margin-bottom: 0;
+            margin: 0;
+            max-width: 520px;
+            align-self: center;
         }
 
         .host-btn:hover,
@@ -103,21 +132,74 @@
         .host-center button:hover,
         .host-center button:focus {
             background: linear-gradient(90deg, #4f8cff 0%, #00f2fe 100%);
-            transform: translateY(-2px) scale(1.06) rotate(-1deg);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(0, 242, 254, 0.22);
+        }
+
+        .host-form-panel .host-btn:hover,
+        .host-form-panel .host-btn:focus {
+            background: linear-gradient(90deg, #4f8cff 0%, #00f2fe 100%);
+            transform: translateY(-2px);
             box-shadow: 0 8px 32px rgba(0, 242, 254, 0.22);
         }
 
         .host-question-section {
             width: 100%;
-            margin-bottom: 18px;
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
         }
 
         .host-center form {
             width: 100%;
+            max-width: 720px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .host-form-panel {
+            width: 100%;
+            max-width: 720px;
+            background: rgba(12, 24, 38, 0.88);
+            border-radius: 18px;
+            border: 1px solid rgba(90, 140, 170, 0.35);
+            box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .host-form-panel .host-btn {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            max-width: 520px;
+        }
+
+        .host-submit-message {
+            width: 100%;
+            max-width: 520px;
+            text-align: center;
+            font-weight: 700;
+            color: #baffc9;
+            background: rgba(10, 20, 34, 0.7);
+            border: 1px solid rgba(90, 140, 170, 0.35);
+            border-radius: 10px;
+            padding: 10px 12px;
+            margin-top: 6px;
+            display: none;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .host-back-btn {
-            margin-top: 18px;
+            margin-top: 6px;
+            margin-bottom: 0;
             background: none;
             border: 2px solid #00f2fe;
             color: #00f2fe;
@@ -127,8 +209,32 @@
             font-weight: 700;
             cursor: pointer;
             transition: background 0.18s, color 0.18s;
-            max-width: 540px;
+            max-width: 520px;
             width: 100%;
+            align-self: center;
+        }
+
+        @media (max-width: 720px) {
+            .host-center {
+                padding: 32px 16px 48px 16px;
+            }
+
+            .host-form-panel {
+                padding: 16px;
+            }
+        }
+
+        /* Extra gap between stacked primary buttons */
+        .host-btn + .host-btn {
+            margin-top: 10px;
+        }
+
+        .host-form-panel .host-btn + .host-btn {
+            margin-top: 10px;
+        }
+
+        .host-back-btn {
+            margin-top: 10px;
         }
 
         .host-back-btn:hover,
@@ -140,6 +246,16 @@
 </head>
 
 <body>
+    <script>
+        // Guard: only admins can access host page
+        (function () {
+            const token = localStorage.getItem('token');
+            const role = localStorage.getItem('role') || 'USER';
+            if (!token || role !== 'ADMIN') {
+                window.location.href = 'dashboard.html';
+            }
+        })();
+    </script>
     <!-- Subtle background shapes for theme continuity -->
     <svg class="host-bg-obj" style="top:8vh; left:8vw; width:90px;" viewBox="0 0 120 120">
         <circle cx="60" cy="60" r="55" fill="#00f2fe" />
@@ -154,20 +270,22 @@
         style="position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:-2;pointer-events:none;"></canvas>
     <div class="host-center">
         <div class="host-title">Host a New Quiz</div>
-        <div id="quiz-id-section" style="width:100%;">
-            <label class="host-label">Quiz ID:
+        <div class="host-card">
+            <div id="quiz-id-section">
+                <label class="host-label" for="quiz-id">Quiz ID:</label>
                 <input type="text" id="quiz-id" class="host-input" required>
-            </label>
-            <button class="host-btn" id="start-questions-btn">Start Adding Questions</button>
-        </div>
-        <form id="quiz-form" style="display:none;width:100%;">
-            <div id="questions-section" class="host-question-section">
-                <!-- Questions will be added here -->
+                <button class="host-btn" id="start-questions-btn">Start Adding Questions</button>
             </div>
-            <button type="button" class="host-btn" id="add-question-btn">Add Question</button><br><br>
-            <button type="submit" class="host-btn">Submit Quiz</button>
-        </form>
-        <button class="host-back-btn" onclick="window.location.href='dashboard.html'">Back to Dashboard</button>
+            <form id="quiz-form" class="host-form-panel" style="display:none;width:100%;">
+                <div id="questions-section" class="host-question-section">
+                    <!-- Questions will be added here -->
+                </div>
+                <button type="button" class="host-btn" id="add-question-btn">Add Question</button>
+                <button type="submit" class="host-btn">Submit Quiz</button>
+                <div id="host-submit-message" class="host-submit-message"></div>
+            </form>
+            <button class="host-back-btn" onclick="window.location.href='dashboard.html'">Back to Dashboard</button>
+        </div>
     </div>
     <script src="js/host-utils.js"></script>
     <script src="js/host.js"></script>

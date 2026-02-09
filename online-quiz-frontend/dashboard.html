@@ -154,6 +154,72 @@
             margin-left: auto;
             margin-right: auto;
         }
+
+        .report-panel {
+            width: 100%;
+            max-width: 720px;
+            background: rgba(12, 24, 38, 0.92);
+            border-radius: 18px;
+            border: 1px solid rgba(90, 140, 170, 0.35);
+            box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
+            padding: 20px;
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 6px;
+        }
+
+        .report-summary {
+            font-size: 1rem;
+            color: #eaf4ff;
+            line-height: 1.5;
+        }
+
+        .report-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .report-item {
+            background: rgba(20, 36, 56, 0.95);
+            border: 1px solid rgba(79, 140, 255, 0.35);
+            border-radius: 12px;
+            padding: 12px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .report-item span {
+            font-size: 0.98rem;
+            color: #eaf4ff;
+        }
+
+        .report-close {
+            background: none;
+            border: 2px solid #00f2fe;
+            color: #00f2fe;
+            border-radius: 10px;
+            padding: 8px 16px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.18s, color 0.18s;
+            align-self: center;
+            max-width: 220px;
+            width: 100%;
+        }
+
+        .report-close:hover,
+        .report-close:focus {
+            background: #00f2fe;
+            color: #1e003a;
+        }
     </style>
 </head>
 
@@ -179,6 +245,7 @@
         <div class="dashboard-title">Welcome to the Quiz App</div>
         <button class="dashboard-btn" id="host-quiz-btn">Host Quiz</button>
         <button class="dashboard-btn" id="join-quiz-btn">Join Quiz</button>
+        <button class="dashboard-btn" id="report-card-btn">Report Card</button>
         <div id="join-quiz-section" style="display:none;width:100%;margin-bottom:18px;">
             <div class="dashboard-input-row">
                 <input type="text" id="quiz-id-input" class="dashboard-input" placeholder="Enter Quiz ID" />
@@ -186,8 +253,14 @@
                     style="padding:12px 24px;width:auto;min-width:90px;">Enter</button>
             </div>
         </div>
-        <div class="dashboard-section-title">Previously Published Quizzes</div>
-        <button class="dashboard-btn" id="published-quizzes-btn">Previously Published Quizzes</button>
+        <div id="report-panel" class="report-panel">
+            <div class="dashboard-section-title" style="margin:0;">Your Report Card</div>
+            <div id="report-summary" class="report-summary">Loading...</div>
+            <ul id="report-list" class="report-list"></ul>
+            <button class="report-close" id="report-close-btn">Close</button>
+        </div>
+        <!-- Admin-only button; label changed to Admin Panel -->
+        <button class="dashboard-btn" id="published-quizzes-btn">Admin Panel</button>
         <button class="dashboard-logout" onclick="logout()">Logout</button>
     </div>
     <script src="js/dashboard.js"></script>

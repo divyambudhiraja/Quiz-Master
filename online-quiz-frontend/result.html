@@ -8,11 +8,20 @@
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css?family=Quicksand:700,400&display=swap" rel="stylesheet">
     <style>
+        html,
         body {
-            background: linear-gradient(120deg, #eaf4ff 0%, #f8fcff 100%);
+            height: 100vh;
             min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        body {
+            background: linear-gradient(120deg, #1e003a 0%, #0f2027 60%, #2c5364 100%);
             font-family: 'Quicksand', Arial, sans-serif;
             overflow-x: hidden;
+            color: #fff;
         }
 
         .confetti {
@@ -30,13 +39,14 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(120deg, #eaf4ff 0%, #f8fcff 100%);
         }
 
         .result-box {
-            background: linear-gradient(120deg, #fff 60%, #eaf4ff 100%);
+            background: radial-gradient(circle at top, rgba(0, 242, 254, 0.16), transparent 55%),
+                radial-gradient(circle at bottom, rgba(79, 140, 255, 0.16), transparent 55%),
+                rgba(15, 32, 55, 0.92);
             border-radius: 22px;
-            box-shadow: 0 8px 36px rgba(44, 62, 80, 0.22);
+            box-shadow: 0 14px 46px rgba(0, 0, 0, 0.65);
             padding: 48px 54px 38px 54px;
             max-width: 480px;
             width: 97vw;
@@ -74,7 +84,7 @@
         .result-title {
             font-size: 2.3rem;
             font-weight: 800;
-            color: #2d3a4a;
+            color: #ffffff;
             margin-bottom: 10px;
             text-align: center;
             letter-spacing: 1px;
@@ -90,7 +100,7 @@
 
         .result-detail {
             font-size: 1.18rem;
-            color: #34495e;
+            color: #eaf4ff;
             margin-bottom: 8px;
         }
 
@@ -144,6 +154,8 @@
 </head>
 
 <body>
+    <canvas id="starfield"
+        style="position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:-2;pointer-events:none;"></canvas>
     <canvas class="confetti" id="confetti-canvas"></canvas>
     <div class="result-main-bg">
         <div class="result-box">
@@ -158,6 +170,60 @@
     </div>
     <script src="js/result.js"></script>
     <script>
+        // Starfield animation for result page
+        const starCanvas = document.getElementById('starfield');
+        if (starCanvas) {
+            const sctx = starCanvas.getContext('2d');
+            let sw = window.innerWidth;
+            let sh = window.innerHeight;
+            starCanvas.width = sw;
+            starCanvas.height = sh;
+            let stars = [];
+            for (let i = 0; i < 90; i++) {
+                stars.push({
+                    x: Math.random() * sw,
+                    y: Math.random() * sh,
+                    r: Math.random() * 1.2 + 0.3,
+                    d: Math.random() * 0.5 + 0.2
+                });
+            }
+
+            function drawStars() {
+                sctx.clearRect(0, 0, sw, sh);
+                sctx.save();
+                sctx.globalAlpha = 0.85;
+                for (let s of stars) {
+                    sctx.beginPath();
+                    sctx.arc(s.x, s.y, s.r, 0, 2 * Math.PI);
+                    sctx.fillStyle = '#fff';
+                    sctx.shadowColor = '#00f2fe';
+                    sctx.shadowBlur = 8;
+                    sctx.fill();
+                }
+                sctx.restore();
+            }
+
+            function animateStars() {
+                for (let s of stars) {
+                    s.y += s.d;
+                    if (s.y > sh) {
+                        s.y = 0;
+                        s.x = Math.random() * sw;
+                    }
+                }
+                drawStars();
+                requestAnimationFrame(animateStars);
+            }
+
+            window.addEventListener('resize', () => {
+                sw = window.innerWidth;
+                sh = window.innerHeight;
+                starCanvas.width = sw;
+                starCanvas.height = sh;
+            });
+            animateStars();
+        }
+
         // Simple confetti animation
         const canvas = document.getElementById('confetti-canvas');
         const ctx = canvas.getContext('2d');

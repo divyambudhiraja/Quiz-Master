@@ -13,6 +13,8 @@ public interface ResultRepository extends JpaRepository<Result, Long> {
 
 	boolean existsByQuizIdAndStudentUsername(String quizId, String studentUsername);
 
+	java.util.List<Result> findByStudentUsername(String studentUsername);
+
 	@Modifying
 	@Transactional
 	@Query("DELETE FROM Result r WHERE r.quizId = :quizId")

@@ -21,7 +21,11 @@ document.addEventListener("DOMContentLoaded", function () {
             alert("Please enter a quiz ID.");
             return;
         }
-        window.location.href = `admin.html?quizId=${encodeURIComponent(quizId)}`;
+        quizIdSection.style.display = "none";
+        quizForm.style.display = "block";
+        if (questionsSection.querySelectorAll('.question-block').length === 0) {
+            addQuestion();
+        }
     };
 
 
@@ -42,6 +46,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     quizForm.onsubmit = async function (e) {
         e.preventDefault();
+        const submitMsg = document.getElementById("host-submit-message");
+        if (submitMsg) {
+            submitMsg.textContent = "";
+            submitMsg.style.display = "none";
+        }
         const questionBlocks = document.querySelectorAll('.question-block');
         if (!quizId || questionBlocks.length === 0) {
             alert("Quiz ID and at least one question are required.");
@@ -76,18 +85,32 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         // Submit each question to backend
         let success = true;
+        const token = localStorage.getItem("token");
+        const headers = {
+            "Content-Type": "application/json",
+            ...(token ? { "Authorization": `Bearer ${token}` } : {})
+        };
         for (const q of questions) {
             const res = await fetch("http://localhost:8081/api/questions/add", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers,
                 body: JSON.stringify(q)
             });
             if (!res.ok) success = false;
         }
         if (success) {
-            alert("Quiz hosted successfully!");
-            window.location.href = `admin.html?quizId=${encodeURIComponent(quizId)}`;
+            if (submitMsg) {
+                submitMsg.textContent = "Quiz created successfully.";
+                submitMsg.style.display = "block";
+                submitMsg.scrollIntoView({ behavior: "smooth", block: "center" });
+            }
+            alert("Quiz created successfully.");
+            // Stay on host page after submit
         } else {
+            if (submitMsg) {
+                submitMsg.textContent = "Some questions could not be added. Please try again.";
+                submitMsg.style.display = "block";
+            }
             alert("Some questions could not be added. Please try again.");
         }
     };

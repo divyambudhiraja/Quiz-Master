@@ -15,8 +15,7 @@ import io.jsonwebtoken.security.Keys;
 @Component
 public class JwtUtil {
 
-    // At least 256-bit key (32+ chars). You can override via
-    // application.properties: jwt.secret=...
+
     @Value("${jwt.secret:ZmFrZV9zdXBlcl9sb25nX3NlY3JldF9rZXlfMzJfY2hhcnNfbWluaW11bQ==}")
     private String secretBase64; // default is base64 for "fake_super_long_secret_key_32_chars_minimum"
 
@@ -25,9 +24,10 @@ public class JwtUtil {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateToken(String username) {
+    public String generateToken(String username, String role) {
         return Jwts.builder()
                 .setSubject(username)
+                .claim("role", role)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1 hour
                 .signWith(getKey(), SignatureAlgorithm.HS256)

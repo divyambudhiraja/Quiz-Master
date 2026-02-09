@@ -2,19 +2,89 @@
 
 // Hide quiz list by default
 document.addEventListener("DOMContentLoaded", function () {
-    // document.getElementById("quiz-list").style.display = "none";
-    // document.getElementById("quiz-list-title").style.display = "none";
     document.getElementById("join-quiz-section").style.display = "none";
 
-    document.getElementById("host-quiz-btn").onclick = function () {
-        window.location.href = "host.html";
-    };
+    const role = localStorage.getItem("role") || "USER";
+    const hostBtn = document.getElementById("host-quiz-btn");
+    const publishedBtn = document.getElementById("published-quizzes-btn");
+    const reportBtn = document.getElementById("report-card-btn");
+    const reportPanel = document.getElementById("report-panel");
+    const reportCloseBtn = document.getElementById("report-close-btn");
+    const reportSummary = document.getElementById("report-summary");
+    const reportList = document.getElementById("report-list");
+
+    // Only admins can host quizzes or open the admin panel
+    if (role !== "ADMIN") {
+        if (hostBtn) hostBtn.style.display = "none";
+        if (publishedBtn) publishedBtn.style.display = "none";
+    } else {
+        if (hostBtn) {
+            hostBtn.onclick = function () {
+                window.location.href = "host.html";
+            };
+        }
+        if (publishedBtn) {
+            publishedBtn.onclick = function () {
+                window.location.href = "admin.html";
+            };
+        }
+    }
+
     document.getElementById("join-quiz-btn").onclick = function () {
         document.getElementById("join-quiz-section").style.display = "block";
     };
-    document.getElementById("published-quizzes-btn").onclick = function () {
-        window.location.href = "admin.html";
-    };
+
+    if (reportBtn && reportPanel) {
+        reportBtn.onclick = async function () {
+            reportPanel.style.display = "flex";
+            if (reportSummary) reportSummary.textContent = "Loading...";
+            if (reportList) reportList.innerHTML = "";
+            const uname = getUsernameFromToken() || localStorage.getItem("username");
+            if (!uname) {
+                if (reportSummary) reportSummary.textContent = "Unable to find your username.";
+                return;
+            }
+            try {
+                const res = await fetch(`http://localhost:8082/api/results/report/${encodeURIComponent(uname)}`, { headers });
+                if (!res.ok) {
+                    if (reportSummary) reportSummary.textContent = "No report found yet.";
+                    return;
+                }
+                const data = await res.json();
+                if (reportSummary) {
+                    reportSummary.innerHTML =
+                        `User: <strong>${data.studentUsername}</strong><br>` +
+                        `Total Quizzes Attempted: <strong>${data.totalQuizzes}</strong><br>` +
+                        `Total Score: <strong>${data.totalScore}</strong><br>` +
+                        `Correct Answers: <strong>${data.totalCorrectAnswers}/${data.totalQuestions}</strong>`;
+                }
+                if (reportList) {
+                    const results = Array.isArray(data.results) ? data.results : [];
+                    if (results.length === 0) {
+                        reportList.innerHTML = "<li class='report-item'><span>No quizzes attempted yet.</span></li>";
+                    } else {
+                        reportList.innerHTML = "";
+                        results.forEach(r => {
+                            const li = document.createElement("li");
+                            li.className = "report-item";
+                            const total = r.totalQuestions ?? "?";
+                            const correct = r.correctAnswers ?? "?";
+                            li.innerHTML = `<span>Quiz: <strong>${r.quizId}</strong></span><span>Score: ${r.score} (Correct: ${correct}/${total})</span>`;
+                            reportList.appendChild(li);
+                        });
+                    }
+                }
+            } catch (e) {
+                if (reportSummary) reportSummary.textContent = "Error fetching report.";
+            }
+        };
+    }
+
+    if (reportCloseBtn && reportPanel) {
+        reportCloseBtn.onclick = function () {
+            reportPanel.style.display = "none";
+        };
+    }
 
     // Enter quiz by pressing Enter or clicking button
     document.getElementById("quiz-id-input").addEventListener("keydown", function (e) {
@@ -45,6 +115,17 @@ const headers = {
     "Content-Type": "application/json",
     "Authorization": `Bearer ${token}`,
 };
+
+function getUsernameFromToken() {
+    const token = localStorage.getItem("token");
+    if (!token) return null;
+    try {
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        return payload.sub || payload.username || null;
+    } catch (e) {
+        return null;
+    }
+}
 
 async function fetchQuizzes() {
     try {

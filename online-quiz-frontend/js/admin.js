@@ -33,13 +33,8 @@ function getUsernameFromToken() {
     }
 }
 
-async function fetchMyQuizzes() {
-    const username = getUsernameFromToken();
-    if (!username) {
-        document.getElementById("admin-quiz-list").innerHTML = "<p>Could not determine user.</p>";
-        return;
-    }
-    const res = await fetch(`${API_BASE}/host/${username}`, { headers });
+async function fetchAllQuizzes() {
+    const res = await fetch(`${API_BASE}/quiz/all`, { headers });
     const quizzes = await res.json();
     renderAdminQuizzes(quizzes);
 }
@@ -52,17 +47,12 @@ function renderAdminQuizzes(quizzes) {
         return;
     }
     quizzes.forEach((quizId) => {
-        const div = document.createElement("div");
-        div.className = "quiz-card";
-        div.innerHTML = `
-            <b>Quiz ID:</b> ${quizId}
-            <div class="quiz-card-options">
-                <button onclick="editQuiz('${quizId}')">Edit</button>
-                <button onclick="deleteQuiz('${quizId}')">Delete</button>
-                <button onclick="viewParticipants('${quizId}')">View Participants</button>
-            </div>
-        `;
-        container.appendChild(div);
+        const btn = document.createElement("button");
+        btn.className = "admin-primary-btn";
+        btn.style.marginBottom = "16px";
+        btn.textContent = `Quiz ID: ${quizId}`;
+        btn.onclick = () => viewParticipants(quizId);
+        container.appendChild(btn);
     });
 }
 
@@ -91,8 +81,6 @@ window.deleteQuiz = async function (quizId) {
 };
 
 window.viewParticipants = async function (quizId) {
-    document.getElementById("admin-quizzes-section").style.display = "none";
-    document.getElementById("participants-section").style.display = "block";
     document.getElementById("participants-quiz-id").textContent = quizId;
     // Fetch all results for this quiz
     const res = await fetch(`${RESULT_API}/quiz/${quizId}`, { headers });
@@ -105,7 +93,9 @@ window.viewParticipants = async function (quizId) {
     }
     participants.forEach((p) => {
         const li = document.createElement('li');
-        li.innerHTML = `${p.studentUsername} (Score: ${p.score}) <button class="delete-user-result-btn">Delete</button>`;
+        const total = p.totalQuestions ?? "?";
+        const correct = p.correctAnswers ?? "?";
+        li.innerHTML = `${p.studentUsername} &mdash; Score: ${p.score} (Correct: ${correct}/${total}) <button class="delete-user-result-btn">Delete</button>`;
         li.querySelector('.delete-user-result-btn').onclick = async function () {
             if (!confirm(`Delete result for user ${p.studentUsername}?`)) return;
             const delRes = await fetch(`${RESULT_API}/quiz/${quizId}/user/${p.studentUsername}`, { method: "DELETE", headers });
@@ -121,8 +111,8 @@ window.viewParticipants = async function (quizId) {
 };
 
 window.hideParticipants = function () {
-    document.getElementById("participants-section").style.display = "none";
-    document.getElementById("admin-quizzes-section").style.display = "block";
+    document.getElementById("participants-quiz-id").textContent = "Select a quiz";
+    document.getElementById("participants-list").innerHTML = "";
 };
 
 
@@ -268,10 +258,9 @@ window.deleteQuestion = async function (qid, btn) {
 
 const quizIdParam = getQueryParam('quizId');
 if (quizIdParam) {
-    document.getElementById("admin-quizzes-section").querySelector("h3").textContent = "";
     fetchQuizQuestions(quizIdParam);
 } else {
-    fetchMyQuizzes();
+    fetchAllQuizzes();
 }
 
 // Utility to extract username from JWT token
@@ -286,20 +275,158 @@ function getUsernameFromToken() {
     }
 }
 
-function fetchUserQuizzes() {
-    const username = getUsernameFromToken();
-    if (!username) return;
-    fetch(`http://localhost:8081/api/questions/host/${username}`, {
-        headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-    })
-        .then(res => res.json())
-        .then(quizzes => {
-            // Render only these quizzes in the admin panel
-            renderAdminQuizzes(quizzes);
-        });
-}
+document.addEventListener("DOMContentLoaded", function () {
+    // Left-side navigation
+    const navQuizzes = document.getElementById("nav-quizzes");
+    const navPromote = document.getElementById("nav-promote");
+    const navReport = document.getElementById("nav-report");
+    const sectionQuizzes = document.getElementById("section-quizzes");
+    const sectionPromote = document.getElementById("section-promote");
+    const sectionReport = document.getElementById("section-report");
+    const sectionParticipants = document.getElementById("section-participants");
 
-// Call fetchUserQuizzes() when loading the admin panel or previously published quizzes
-fetchUserQuizzes();
+    function showSection(section) {
+        [sectionQuizzes, sectionPromote, sectionReport].forEach(s => {
+            if (s) s.style.display = "none";
+        });
+        if (section) section.style.display = "block";
+        [navQuizzes, navPromote, navReport].forEach(b => {
+            if (b) b.classList.remove("active");
+        });
+        // Show participants only when in "Previously Made Quizzes"
+        if (sectionParticipants) {
+            sectionParticipants.style.display = (section === sectionQuizzes) ? "block" : "none";
+        }
+    }
+
+    if (navQuizzes) {
+        navQuizzes.onclick = function () {
+            showSection(sectionQuizzes);
+            navQuizzes.classList.add("active");
+        };
+    }
+    if (navPromote) {
+        navPromote.onclick = function () {
+            showSection(sectionPromote);
+            navPromote.classList.add("active");
+        };
+    }
+    if (navReport) {
+        navReport.onclick = function () {
+            showSection(sectionReport);
+            navReport.classList.add("active");
+        };
+    }
+
+    // Default: no section selected until user clicks a button
+
+    // Promote a user to admin
+    const promoteBtn = document.getElementById("promote-btn");
+    const promoteInput = document.getElementById("promote-username");
+    const promoteMsg = document.getElementById("promote-message");
+    const userListEl = document.getElementById("user-list");
+    const reportUserListEl = document.getElementById("report-user-list");
+    const reportInput = document.getElementById("report-username");
+    const reportBtn = document.getElementById("report-btn");
+    const reportDetails = document.getElementById("report-details");
+
+    async function loadUsers() {
+        if (!userListEl && !reportUserListEl) return;
+        if (userListEl) userListEl.innerHTML = "Loading users...";
+        if (reportUserListEl) reportUserListEl.innerHTML = "Loading users...";
+        try {
+            const res = await fetch("http://localhost:8080/api/auth/users", { headers });
+            const users = await res.json();
+            if (userListEl) {
+                userListEl.innerHTML = "";
+                users.forEach(u => {
+                    const div = document.createElement("div");
+                    div.className = "user-list-item";
+                    div.innerHTML = `<span>${u.username}</span><span style="font-size:0.8rem;opacity:0.8;">${u.role}</span>`;
+                    div.onclick = () => {
+                        promoteInput.value = u.username;
+                    };
+                    userListEl.appendChild(div);
+                });
+            }
+            if (reportUserListEl) {
+                reportUserListEl.innerHTML = "";
+                users.forEach(u => {
+                    const div = document.createElement("div");
+                    div.className = "user-list-item";
+                    div.innerHTML = `<span>${u.username}</span><span style="font-size:0.8rem;opacity:0.8;">${u.role}</span>`;
+                    div.onclick = () => {
+                        reportInput.value = u.username;
+                    };
+                    reportUserListEl.appendChild(div);
+                });
+            }
+        } catch (e) {
+            if (userListEl) userListEl.innerHTML = "Failed to load users.";
+            if (reportUserListEl) reportUserListEl.innerHTML = "Failed to load users.";
+        }
+    }
+
+    loadUsers();
+
+    if (promoteBtn && promoteInput) {
+        promoteBtn.onclick = async function () {
+            const usernameToPromote = promoteInput.value.trim();
+            promoteMsg.textContent = "";
+            if (!usernameToPromote) {
+                promoteMsg.textContent = "Please enter a username.";
+                return;
+            }
+            try {
+                const res = await fetch("http://localhost:8080/api/auth/make-admin", {
+                    method: "POST",
+                    headers,
+                    body: JSON.stringify({ username: usernameToPromote })
+                });
+                const raw = await res.text().catch(() => "");
+                let data = {};
+                try { data = raw ? JSON.parse(raw) : {}; } catch (e) { }
+                if (res.ok) {
+                    promoteMsg.style.color = "#baffc9";
+                    promoteMsg.textContent = data.message || "User promoted to admin.";
+                    loadUsers();
+                } else {
+                    promoteMsg.style.color = "#ff4d4f";
+                    promoteMsg.textContent = data.error || raw || `Failed to promote user (HTTP ${res.status}).`;
+                }
+            } catch (e) {
+                promoteMsg.style.color = "#ff4d4f";
+                promoteMsg.textContent = `Error promoting user: ${e.message || e}`;
+            }
+        };
+    }
+
+    // Report card: aggregate score for a username
+    if (reportBtn && reportInput && reportDetails) {
+        reportBtn.onclick = async function () {
+            const uname = reportInput.value.trim();
+            reportDetails.textContent = "";
+            if (!uname) {
+                reportDetails.textContent = "Please enter a username.";
+                return;
+            }
+            try {
+                const res = await fetch(`http://localhost:8082/api/results/report/${encodeURIComponent(uname)}`, {
+                    headers
+                });
+                if (!res.ok) {
+                    reportDetails.textContent = "No report found or error fetching report.";
+                    return;
+                }
+                const data = await res.json();
+                reportDetails.innerHTML =
+                    `User: <strong>${data.studentUsername}</strong><br>` +
+                    `Total Quizzes Attempted: <strong>${data.totalQuizzes}</strong><br>` +
+                    `Total Score: <strong>${data.totalScore}</strong><br>` +
+                    `Correct Answers: <strong>${data.totalCorrectAnswers}/${data.totalQuestions}</strong>`;
+            } catch (e) {
+                reportDetails.textContent = "Error fetching report.";
+            }
+        };
+    }
+});
