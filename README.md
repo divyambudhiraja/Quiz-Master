@@ -1,6 +1,6 @@
-# QuizMaster (Online Quiz Application)
+# QuizMaster
 
-Full‑stack quiz platform with a static frontend and three Spring Boot services:
+QuizMaster is a full‑stack online quiz platform where users can register, take quizzes by ID, and view their results, while admins host and manage quizzes.
 
 - `auth-quiz-service` — authentication and users
 - `question-bank-service` — quiz questions
