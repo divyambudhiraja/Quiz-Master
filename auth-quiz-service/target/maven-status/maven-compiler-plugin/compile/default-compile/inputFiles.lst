@@ -1,0 +1,7 @@
+/Users/Divyam/Downloads/OnlineQuizApplication 2/auth-quiz-service/src/main/java/com/example/authquiz/AuthQuizApplication.java
+/Users/Divyam/Downloads/OnlineQuizApplication 2/auth-quiz-service/src/main/java/com/example/authquiz/controller/AuthController.java
+/Users/Divyam/Downloads/OnlineQuizApplication 2/auth-quiz-service/src/main/java/com/example/authquiz/model/Student.java
+/Users/Divyam/Downloads/OnlineQuizApplication 2/auth-quiz-service/src/main/java/com/example/authquiz/repository/StudentRepository.java
+/Users/Divyam/Downloads/OnlineQuizApplication 2/auth-quiz-service/src/main/java/com/example/authquiz/security/JwtUtil.java
+/Users/Divyam/Downloads/OnlineQuizApplication 2/auth-quiz-service/src/main/java/com/example/authquiz/security/SecurityConfig.java
+/Users/Divyam/Downloads/OnlineQuizApplication 2/auth-quiz-service/src/main/java/com/example/authquiz/service/StudentService.java

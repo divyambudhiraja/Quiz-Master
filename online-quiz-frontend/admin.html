@@ -1,0 +1,46 @@
+<!-- admin.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Panel - Quiz App</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body
+    style="background: linear-gradient(120deg, #e3f0ff 0%, #f7faff 100%); min-height:100vh; overflow-x:hidden; font-family:'Quicksand', Arial, sans-serif;">
+    <div
+        style="max-width: 520px; margin: 48px auto; padding: 32px 24px 24px 24px; border-radius: 16px; background: linear-gradient(120deg, #f7faff 60%, #e3f0ff 100%); box-shadow: 0 2px 16px #b3d1ff55;">
+        <h2
+            style="text-align:center; color:#4f8cff; font-size:2.1rem; font-weight:900; margin-bottom:18px; letter-spacing:1.2px; text-shadow:0 0 10px #b3d1ff, 0 0 18px #4f8cff;">
+            Admin Panel</h2>
+        <div id="admin-quizzes-section" style="margin-bottom:24px;">
+            <h3
+                style="color:#ffe066; font-size:1.08rem; font-weight:700; margin-bottom:12px; letter-spacing:0.5px; text-shadow:0 0 4px #00f2fe66;">
+                Your Published Quizzes</h3>
+            <div id="admin-quiz-list"></div>
+            <button id="add-question-btn"
+                style="display:none; background:linear-gradient(90deg,#00f2fe 0%,#4f8cff 100%); color:#fff; font-size:1rem; font-weight:700; border:none; border-radius:10px; padding:12px 0; cursor:pointer; transition:background 0.2s; margin-bottom:8px; width:100%; max-width:260px; align-self:flex-start; letter-spacing:0.5px;">Add
+                Question</button>
+            <button id="delete-entire-quiz-btn"
+                style="display:none; background:linear-gradient(90deg,#ff00c8 0%,#00f2fe 100%); color:#fff; font-size:1rem; font-weight:700; border:none; border-radius:10px; padding:12px 0; cursor:pointer; transition:background 0.2s; margin-bottom:8px; width:100%; max-width:260px; align-self:flex-start; letter-spacing:0.5px;">Delete
+                Entire Quiz</button>
+        </div>
+        <div id="participants-section" style="display:none; margin-bottom:24px;">
+            <h3
+                style="color:#ffe066; font-size:1.08rem; font-weight:700; margin-bottom:12px; letter-spacing:0.5px; text-shadow:0 0 4px #00f2fe66;">
+                Participants for Quiz: <span id="participants-quiz-id"></span></h3>
+            <ul id="participants-list" style="list-style:none; padding:0; margin:0 0 10px 0;"></ul>
+            <button onclick="hideParticipants()"
+                style="background:linear-gradient(90deg,#00f2fe 0%,#4f8cff 100%); color:#fff; font-size:1rem; font-weight:700; border:none; border-radius:10px; padding:12px 0; cursor:pointer; transition:background 0.2s; margin-bottom:8px; width:100%; max-width:260px; align-self:flex-start; letter-spacing:0.5px;">Back</button>
+        </div>
+        <button onclick="window.location.href='dashboard.html'"
+            style="background:linear-gradient(90deg,#00f2fe 0%,#4f8cff 100%); color:#fff; font-size:1rem; font-weight:700; border:none; border-radius:10px; padding:12px 0; cursor:pointer; transition:background 0.2s; margin-bottom:8px; width:100%; max-width:260px; align-self:flex-start; letter-spacing:0.5px;">Back
+            to Dashboard</button>
+    </div>
+    <script src="js/host-utils.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+
+</html>

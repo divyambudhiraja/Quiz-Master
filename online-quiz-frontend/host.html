@@ -1,0 +1,230 @@
+<!-- host.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Host Quiz - Quiz App</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css?family=Quicksand:700,400&display=swap" rel="stylesheet">
+    <style>
+        html,
+        body {
+            height: 100vh;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        body {
+            background: linear-gradient(120deg, #1e003a 0%, #0f2027 60%, #2c5364 100%);
+            font-family: 'Quicksand', Arial, sans-serif;
+            color: #fff;
+        }
+
+        .host-bg-obj {
+            position: absolute;
+            z-index: 0;
+            opacity: 0.13;
+            pointer-events: none;
+        }
+
+        .host-center {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 540px;
+        }
+
+        .host-title {
+            font-size: 2.7rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            color: #fff;
+            text-shadow: 0 0 18px #00f2fe, 0 0 32px #4f8cff;
+            margin-bottom: 32px;
+            text-align: center;
+        }
+
+        .host-label {
+            font-size: 1.18rem;
+            font-weight: 700;
+            color: #ffe066;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+            align-self: flex-start;
+        }
+
+        .host-input,
+        .host-center input[type="text"] {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: none;
+            font-size: 1.1rem;
+            background: #232b3a;
+            color: #fff;
+            box-shadow: 0 1.5px 0 #00f2fe44;
+            margin-bottom: 18px;
+        }
+
+        .host-btn,
+        .host-center button,
+        .host-center input[type="submit"] {
+            background: linear-gradient(90deg, #00f2fe 0%, #4f8cff 100%);
+            color: #fff;
+            font-size: 1.18rem;
+            font-weight: 800;
+            border: none;
+            border-radius: 14px;
+            padding: 16px 0;
+            cursor: pointer;
+            box-shadow: 0 2px 18px rgba(0, 242, 254, 0.18);
+            transition: background 0.2s, transform 0.13s, box-shadow 0.13s;
+            letter-spacing: 1px;
+            width: 100%;
+            margin-bottom: 18px;
+            max-width: 540px;
+        }
+
+        .host-btn:last-child {
+            margin-bottom: 0;
+        }
+
+        .host-btn:hover,
+        .host-btn:focus,
+        .host-center button:hover,
+        .host-center button:focus {
+            background: linear-gradient(90deg, #4f8cff 0%, #00f2fe 100%);
+            transform: translateY(-2px) scale(1.06) rotate(-1deg);
+            box-shadow: 0 8px 32px rgba(0, 242, 254, 0.22);
+        }
+
+        .host-question-section {
+            width: 100%;
+            margin-bottom: 18px;
+        }
+
+        .host-center form {
+            width: 100%;
+        }
+
+        .host-back-btn {
+            margin-top: 18px;
+            background: none;
+            border: 2px solid #00f2fe;
+            color: #00f2fe;
+            border-radius: 8px;
+            padding: 10px 32px;
+            font-size: 1.08rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.18s, color 0.18s;
+            max-width: 540px;
+            width: 100%;
+        }
+
+        .host-back-btn:hover,
+        .host-back-btn:focus {
+            background: #00f2fe;
+            color: #1e003a;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Subtle background shapes for theme continuity -->
+    <svg class="host-bg-obj" style="top:8vh; left:8vw; width:90px;" viewBox="0 0 120 120">
+        <circle cx="60" cy="60" r="55" fill="#00f2fe" />
+    </svg>
+    <svg class="host-bg-obj" style="bottom:10vh; right:12vw; width:70px;" viewBox="0 0 90 90">
+        <polygon points="45,10 85,80 5,80" fill="#ffe066" />
+    </svg>
+    <svg class="host-bg-obj" style="top:18vh; right:10vw; width:54px;" viewBox="0 0 54 54">
+        <polygon points="27,6 51,48 3,48" fill="#ffe066" />
+    </svg>
+    <canvas id="starfield"
+        style="position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:-2;pointer-events:none;"></canvas>
+    <div class="host-center">
+        <div class="host-title">Host a New Quiz</div>
+        <div id="quiz-id-section" style="width:100%;">
+            <label class="host-label">Quiz ID:
+                <input type="text" id="quiz-id" class="host-input" required>
+            </label>
+            <button class="host-btn" id="start-questions-btn">Start Adding Questions</button>
+        </div>
+        <form id="quiz-form" style="display:none;width:100%;">
+            <div id="questions-section" class="host-question-section">
+                <!-- Questions will be added here -->
+            </div>
+            <button type="button" class="host-btn" id="add-question-btn">Add Question</button><br><br>
+            <button type="submit" class="host-btn">Submit Quiz</button>
+        </form>
+        <button class="host-back-btn" onclick="window.location.href='dashboard.html'">Back to Dashboard</button>
+    </div>
+    <script src="js/host-utils.js"></script>
+    <script src="js/host.js"></script>
+    <script>
+        // Starfield animation for host page
+        const starCanvas = document.getElementById('starfield');
+        if (starCanvas) {
+            const ctx = starCanvas.getContext('2d');
+            let w = window.innerWidth;
+            let h = window.innerHeight;
+            starCanvas.width = w;
+            starCanvas.height = h;
+            let stars = [];
+            for (let i = 0; i < 90; i++) {
+                stars.push({
+                    x: Math.random() * w,
+                    y: Math.random() * h,
+                    r: Math.random() * 1.2 + 0.3,
+                    d: Math.random() * 0.5 + 0.2
+                });
+            }
+
+            function drawStars() {
+                ctx.clearRect(0, 0, w, h);
+                ctx.save();
+                ctx.globalAlpha = 0.85;
+                for (let s of stars) {
+                    ctx.beginPath();
+                    ctx.arc(s.x, s.y, s.r, 0, 2 * Math.PI);
+                    ctx.fillStyle = '#fff';
+                    ctx.shadowColor = '#00f2fe';
+                    ctx.shadowBlur = 8;
+                    ctx.fill();
+                }
+                ctx.restore();
+            }
+
+            function animateStars() {
+                for (let s of stars) {
+                    s.y += s.d;
+                    if (s.y > h) {
+                        s.y = 0;
+                        s.x = Math.random() * w;
+                    }
+                }
+                drawStars();
+                requestAnimationFrame(animateStars);
+            }
+            window.addEventListener('resize', () => {
+                w = window.innerWidth;
+                h = window.innerHeight;
+                starCanvas.width = w;
+                starCanvas.height = h;
+            });
+            animateStars();
+        }
+    </script>
+</body>
+
+</html>
